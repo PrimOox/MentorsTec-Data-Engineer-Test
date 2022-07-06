@@ -23,38 +23,29 @@ def calcula_preco_condicao_fator(condicao_cliente: int, condicao_atual: int, pre
       return np.nan
 
 def cria_novo_registro(cod_produto, cod_cliente, condicoes):
-    new_row = pd.Series({'cod_cliente': cod_cliente, 'sku': cod_produto})
+    new_row = pd.DataFrame({'cod_cliente': cod_cliente, 'sku': cod_produto}, index=[0])
     new_row['nome_razao_social'] = cliente_df['nome_razao_social'][cliente_df['cod_cliente'] == cod_cliente].values[0]
     new_row['condicao'] = cliente_df['condicao'][cliente_df['cod_cliente'] == cod_cliente].values[0]
     new_row['preco_condicao_0'] = produto_df['preco_condicao_0'][produto_df['sku'] == cod_produto].values[0]
     preco_base = new_row['preco_condicao_0']
     condicao_cliente = new_row['condicao']
     for index, row in condicoes.iterrows():
-        new_row['preco_condicao_'+str(int(row['condicao']))] = calcula_preco_condicao_fator(condicao_cliente, row['condicao'], preco_base)
+        new_row['preco_condicao_'+str(int(row['condicao']))] = calcula_preco_condicao_fator(condicao_cliente.values[0], row['condicao'], preco_base.values[0])
     return new_row
     
-def concatena_tabela_preco_condicao(tabela, registro):
-    tabela = tabela.append(registro, ignore_index=True)
-    return tabela    
-
 
 continuar = 's'
 while continuar == 's':
     try:
         cod_produto = input("Digite o código do produto (sku): ") # or '7898632210323' valor default caso branco
         cod_cliente = input("Digite o código do cliente: ") # or '10505' valor default caso branco
-        serie_novo_registro = cria_novo_registro(cod_produto, cod_cliente, tabela_condicoes)
+        novo_registro = cria_novo_registro(cod_produto, cod_cliente, tabela_condicoes)
     except IndexError:
         print("Erro ao ler os dados. Verifique se os digitou corretamente.")
         continuar = input("Deseja tentar novamente? (s/n): ")
         continue
     
-    novo_registro = pd.concat([serie_novo_registro, 
-                              tabela_preco_condicao.reset_index(drop=True, inplace=True)], 
-                              axis=1, 
-                              ignore_index=True).T
-
-    tabela_preco_condicao = concatena_tabela_preco_condicao(tabela_preco_condicao, novo_registro)
+    tabela_preco_condicao = tabela_preco_condicao.append(novo_registro, ignore_index=True)
     
     print(tabela_preco_condicao)
 
