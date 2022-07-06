@@ -23,6 +23,8 @@ O banco de dados SQLite ([loja.db](datasource/loja.db)) e a tabela de condição
 ---
 ## Execução do projeto
 
+Caso queira testar apenas o executável do projeto sem baixar o código fonte, baixe o arquivo zip que contém o executável com a base de dados [neste link](https://github.com/PrimOox/MentorsTec-Data-Engineer-Test/releases/tag/v1.0.1)  
+Ou se desejar executar com o código fonte, siga os passos em diante:  
 Utilizando uma IDE de sua preferência, faça o clone do projeto com o seguinte comando: 
 ```
 git clone https://github.com/PrimOox/MentorsTec-Data-Engineer-Test
