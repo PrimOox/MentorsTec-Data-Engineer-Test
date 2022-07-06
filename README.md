@@ -19,3 +19,24 @@ Exemplo: Produto com sku 7891022100938 e seu preço base é R$ 10,00 tabela com 
 - Clientes do grupo de condição 28 devem possuir a seguinte política de preço para esse produto 7891022100938 10,00 11,00 11,5 12,00 12,5 
 
 O banco de dados SQLite ([loja.db](datasource/loja.db)) e a tabela de condição ([tabela_condicao.csv](datasource/tabela_condicao.csv)) com o grupo:fator se encontram na pasta [datasource](datasource)
+
+---
+## Execução do projeto
+
+Utilizando uma IDE de sua preferência, faça o clone do projeto com o seguinte comando: 
+```
+git clone https://github.com/PrimOox/MentorsTec-Data-Engineer-Test
+```
+
+Instale os pacotes necessários, localizado no arquivo [requirements.txt](requirements.txt) com o comando abaixo:
+```
+pip install -r requirements.txt  
+```
+
+Execute o arquivo [main.py](main.py) no console e forneça os dados solicitados.
+```
+python main.py
+```
+
+Você pode visualizar os dados com um SGBD de sua preferência.  
+Sugestões: [sqlitebrowser](https://sqlitebrowser.org/dl/), [SQLite Manager (extensão do chrome)](https://chrome.google.com/webstore/detail/sqlite-manager/njognipnngillknkhikjecpnbkefclfe?hl=pt).
