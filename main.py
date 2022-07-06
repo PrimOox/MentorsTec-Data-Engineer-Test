@@ -40,10 +40,15 @@ def concatena_tabela_preco_condicao(tabela, registro):
 
 continuar = 's'
 while continuar == 's':
-    cod_produto = input("Digite o código do produto (sku): ") # or '7898632210323' valor default caso branco
-    cod_cliente = input("Digite o código do cliente: ") # or '10505' valor default caso branco
+    try:
+        cod_produto = input("Digite o código do produto (sku): ") # or '7898632210323' valor default caso branco
+        cod_cliente = input("Digite o código do cliente: ") # or '10505' valor default caso branco
+        serie_novo_registro = cria_novo_registro(cod_produto, cod_cliente, tabela_condicoes)
+    except IndexError:
+        print("Erro ao ler os dados. Verifique se os digitou corretamente.")
+        continuar = input("Deseja tentar novamente? (s/n): ")
+        continue
     
-    serie_novo_registro = cria_novo_registro(cod_produto, cod_cliente, tabela_condicoes)
     novo_registro = pd.concat([serie_novo_registro, 
                               tabela_preco_condicao.reset_index(drop=True, inplace=True)], 
                               axis=1, 
@@ -53,7 +58,20 @@ while continuar == 's':
     
     print(tabela_preco_condicao)
 
-    continuar = input("Deseja continuar? (s/n): ")
+    continuar = input("Deseja inserir outro registro? (s/n): ")
+    if continuar == 'n':
+        persistir = input("Deseja persistir os dados no banco? (s/n): ")
+        if persistir == 's':
+            # salva tabela_preco_condicao no banco de dados
+            tabela_preco_condicao.to_sql('preco_condicao_pedido', con, if_exists='append', index=False)
+            print("Dados persistidos no banco de dados.")
+            input("Pressione Enter para sair.")
+            con.close()
+        else:
+            print("Dados não persistidos.")
+            input("Pressione Enter para sair.")
+            con.close()
+            
 
 
 
