@@ -63,7 +63,7 @@ while continuar == 's':
         continuar = input("Deseja tentar novamente? (s/n): ")
         continue
     
-    tabela_preco_condicao = tabela_preco_condicao.append(novo_registro, ignore_index=True)
+    tabela_preco_condicao = pd.concat([tabela_preco_condicao, novo_registro], ignore_index=True)
     
     print(tabela_preco_condicao)
 
