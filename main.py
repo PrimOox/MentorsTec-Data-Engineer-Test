@@ -33,6 +33,24 @@ def cria_novo_registro(cod_produto, cod_cliente, condicoes):
         new_row['preco_condicao_'+str(int(row['condicao']))] = calcula_preco_condicao_fator(condicao_cliente.values[0], row['condicao'], preco_base.values[0])
     return new_row
     
+def checar_estrutura_tabelas_db(tabela_local, nome_tabela_db: str):
+    tabela_existe = pd.read_sql_query(f'''SELECT name FROM sqlite_master 
+                                         WHERE type="table" AND name="{nome_tabela_db}"''', con)
+    # se tabela não existe
+    if tabela_existe.empty: 
+        return True
+
+    cur = con.execute(f"select * from '{nome_tabela_db}'")
+    db_col_names = [description[0] for description in cur.description]
+    # se colunas estão iguais
+    if list(tabela_local.columns) == db_col_names: 
+        return True
+
+    #adiciona colunas inexistentes
+    cols_to_add = set(tabela_local.columns) - set(db_col_names)
+    for col in cols_to_add:
+        con.execute(f"ALTER TABLE preco_condicao_pedido ADD COLUMN '{col}' REAL")
+    return True
 
 continuar = 's'
 while continuar == 's':
@@ -54,7 +72,13 @@ while continuar == 's':
         persistir = input("Deseja persistir os dados no banco? (s/n): ")
         if persistir == 's':
             # salva tabela_preco_condicao no banco de dados
-            tabela_preco_condicao.to_sql('preco_condicao_pedido', con, if_exists='append', index=False)
+            try:
+                if checar_estrutura_tabelas_db(tabela_preco_condicao, 'preco_condicao_pedido') == True:
+                    tabela_preco_condicao.to_sql('preco_condicao_pedido', con, if_exists='append', index=False)
+            except sqlite3.Error as e:
+                print("Erro ao salvar tabela_preco_condicao no banco de dados: ", e)
+                
+        
             print("Dados persistidos no banco de dados.")
             input("Pressione Enter para sair.")
             con.close()
